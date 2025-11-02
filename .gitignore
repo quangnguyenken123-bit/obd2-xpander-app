@@ -41,3 +41,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+.vscode/obd2_demo_app.code-workspace
+.vscode/settings.json
+android/build/reports/problems/problems-report.html
