@@ -5,6 +5,7 @@ import 'package:app_chan_doan/mode_6/mode_6_page.dart';
 import 'package:app_chan_doan/mode_9/module_information_page.dart';
 import 'package:app_chan_doan/training_code/steering_wheel.dart';
 import 'package:flutter/material.dart';
+import 'package:app_chan_doan/mode_4/mode_4_http_livedata.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
@@ -32,6 +33,8 @@ class MenuPage extends StatelessWidget {
               'assets/images/Read_Stream_Data.png', Mode1FirstPage()),
           _buildButton(context, "Actuators Test", 
               'assets/images/Actuators_Test.png', Mode4FirstPage()),
+          _buildButton(context, "HTTP Live Data",
+              'assets/images/Read_Stream_Data.png', Mode4HttpLiveData()),
           _buildButton(context, "Diagnostic",
               'assets/images/Diagnostic.png', DiagnosticPage()),
           _buildButton(context, "OBD Test", 

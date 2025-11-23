@@ -1,7 +1,7 @@
 import 'package:app_chan_doan/menu_page.dart';
 import 'package:app_chan_doan/sigup_page.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // ✅ COMMENT HOẶC XÓA DÒNG NÀY
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _errorMessage;
 
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance; // ✅ COMMENT HOẶC XÓA DÒNG NÀY
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    const Text('Welcome!',
+                    const Text('HELLO!',
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
@@ -67,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: true,
                       decoration: const InputDecoration(
                           labelText: 'Password', prefixIcon: Icon(Icons.lock)),
+                      validator: _validatePassword,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -78,13 +79,14 @@ class _LoginPageState extends State<LoginPage> {
                                     color: Colors.redAccent, fontSize: 14),
                                 textAlign: TextAlign.left),
                           ),
-                        TextButton(
-                          onPressed: _sendPasswordResetEmail,
-                          child: const Text(
-                            'Forgot Password?',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        // ✅ COMMENT HOẶC XÓA PHẦN FORGOT PASSWORD NẾU KHÔNG CẦN
+                        // TextButton(
+                        //   onPressed: _sendPasswordResetEmail,
+                        //   child: const Text(
+                        //     'Forgot Password?',
+                        //     style: TextStyle(fontWeight: FontWeight.bold),
+                        //   ),
+                        // ),
                       ],
                     ),
                     ElevatedButton(
@@ -96,16 +98,30 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text('Sign In',
                           style: TextStyle(color: Colors.white)),
                     ),
-                    TextButton(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignUpPage())),
-                      child: const Text('No account? Sign up here',
-                          style: TextStyle(
-                              fontFamily: 'Times',
-                              fontWeight: FontWeight.bold)),
+                    // ✅ COMMENT HOẶC XÓA PHẦN SIGN UP NẾU KHÔNG CẦN
+                    // TextButton(
+                    //   onPressed: () => Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => SignUpPage())),
+                    //   child: const Text('No account? Sign up here',
+                    //       style: TextStyle(
+                    //           fontFamily: 'Times',
+                    //           fontWeight: FontWeight.bold)),
+                    // ),
+
+                    // 🆕 THÊM NÚT LOGIN NHANH (OPTIONAL)
+                    const SizedBox(height: 10),
+                    OutlinedButton(
+                      onPressed: _quickLogin,
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        side: const BorderSide(color: Colors.black),
+                      ),
+                      child: const Text('Quick Login (No Verification)',
+                          style: TextStyle(color: Colors.black)),
                     ),
+
                     const SizedBox(height: 10),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                   ],
@@ -119,9 +135,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   String? _validateEmail(String? value) {
-    if (value == null ||
-        !RegExp(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]+').hasMatch(value)) {
-      return 'Enter a valid email address';
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    // ✅ GIẢM BỚT VALIDATION STRICT
+    if (!value.contains('@')) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
     }
     return null;
   }
@@ -134,32 +163,55 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     try {
-      UserCredential userCredential =
-          await _firebaseAuth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      User? user = userCredential.user;
-      if (user != null) {
-        if (user.emailVerified) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => MenuPage()));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please verify your email address to proceed.'),
-              duration: Duration(seconds: 5),
-            ),
-          );
-        }
+      // ✅ SIMPLE LOGIN - KHÔNG CẦN FIREBASE
+      String email = _emailController.text.trim();
+      String password = _passwordController.text;
+
+      // 🔥 OPTION 1: CHO PHÉP LOGIN VỚI BẤT KỲ EMAIL/PASSWORD NÀO (với password >= 6 ký tự)
+      if (password.length >= 6) {
+        _navigateToMenu();
+      } else {
+        setState(() {
+          _errorMessage = 'Password must be at least 6 characters';
+        });
       }
+
+      // 🔥 OPTION 2: LOGIN VỚI EMAIL/PASSWORD CỐ ĐỊNH (Bỏ comment để dùng)
+      /*
+      const String defaultEmail = "admin@obd.com";
+      const String defaultPassword = "123456";
+
+      if (email == defaultEmail && password == defaultPassword) {
+        _navigateToMenu();
+      } else {
+        setState(() {
+          _errorMessage = 'Incorrect email or password\n\nTry:\nEmail: admin@obd.com\nPassword: 123456';
+        });
+      }
+      */
+
     } catch (e) {
       setState(() {
-        _errorMessage = 'Incorrect password or email';
+        _errorMessage = 'Login error: $e';
       });
     }
   }
 
+  // 🆕 HÀM LOGIN NHANH KHÔNG CẦN NHẬP GÌ
+  void _quickLogin() {
+    _navigateToMenu();
+  }
+
+  // HÀM ĐIỀU HƯỚNG VÀO MENU
+  void _navigateToMenu() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MenuPage())
+    );
+  }
+
+  // ✅ COMMENT HOẶC XÓA PHẦN RESET PASSWORD
+  /*
   void _sendPasswordResetEmail() async {
     String email = _emailController.text.trim();
     if (email.isEmpty) {
@@ -181,6 +233,7 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+  */
 
   @override
   void dispose() {
