@@ -1,5 +1,4 @@
 import 'package:app_chan_doan/diagnostic/show_dtc.dart';
-import 'package:app_chan_doan/mode_obj_info.dart';
 import 'package:flutter/material.dart';
 
 class DiagnosticPage extends StatelessWidget {
@@ -14,7 +13,7 @@ class DiagnosticPage extends StatelessWidget {
         titleTextStyle: const TextStyle(
             color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: Colors.grey,
             height: 2.0,
@@ -29,10 +28,23 @@ class DiagnosticPage extends StatelessWidget {
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         children: <Widget>[
-          _buildButton(context, "Stored DTC",
-              'assets/images/Stored_DTC.png', ShowDTC(modeInfoDTC: listMode3info)),
-          _buildButton(context, "Pending DTC",
-              'assets/images/Pending_DTC.png', ShowDTC(modeInfoDTC: listMode7info)),
+          // Nút 1: Stored DTC (Lỗi đã lưu - Mode 03)
+          _buildButton(
+              context,
+              "Stored DTC",
+              'assets/images/Stored_DTC.png',
+              // Truyền API endpoint cho Stored DTC
+              const ShowDTC(pageTitle: "Stored DTCs", apiUrl: "http://192.168.4.1/api/dtc/stored")
+          ),
+
+          // Nút 2: Pending DTC (Lỗi chờ - Mode 07)
+          _buildButton(
+              context,
+              "Pending DTC",
+              'assets/images/Pending_DTC.png',
+              // Truyền API endpoint cho Pending DTC
+              const ShowDTC(pageTitle: "Pending DTCs", apiUrl: "http://192.168.4.1/api/dtc/pending")
+          ),
         ],
       ),
     );
@@ -49,12 +61,12 @@ class DiagnosticPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           side: const BorderSide(
               color: Color.fromARGB(255, 0, 0, 0),
-              width: 3), // White border around the button
+              width: 3),
         ),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        backgroundColor: Colors.white, // Background color black
-        foregroundColor: Colors.black, // Text color white
-        elevation: 0, // Optional: adds shadow to the button
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
         shadowColor: Colors.black.withOpacity(1),
       ),
       child: Column(
@@ -65,19 +77,18 @@ class DiagnosticPage extends StatelessWidget {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color:
-                      const Color.fromARGB(255, 183, 183, 183).withOpacity(0),
+                  color: const Color.fromARGB(255, 183, 183, 183).withOpacity(0),
                   spreadRadius: 1,
                   blurRadius: 4,
-                  offset: Offset(0, 0), // changes position of shadow
+                  offset: const Offset(0, 0),
                 ),
               ],
             ),
             child: Image.asset(iconPath,
                 width: 60,
-                height: 60), // Image adjusted to not use ColorFiltered
+                height: 60),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             text,
             textAlign: TextAlign.center,
